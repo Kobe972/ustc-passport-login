@@ -1,6 +1,7 @@
 # ustc-passport-login
-登录ustc身份认证系统，可以自动识别验证码
+登录ustc新版身份认证系统，可以自动识别验证码
 # 使用说明
+登录部分已包装成Login类，使用时导入即可
 ```
 from ustclogin import Login
 login=Login(stuid,password,origin,service,exam) #stuid:学号 password:密码 origin:原本想进的网页 service：服务（参见重定向后网址的查询参数） exam:登录成功会自动进去的网页
