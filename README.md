@@ -6,7 +6,7 @@
 from ustclogin import Login
 login=Login(stuid,password,origin,service,exam) #stuid:学号 password:密码 origin:原本想进的网页 service：服务（参见重定向后网址的查询参数） exam:登录成功会自动进去的网页
 cookies=login.cookies
-result=login.result #登录成功后的页面信息，result.txt即为页面源代码
+result=login.result #登录成功后的页面信息，result.text即为页面源代码
 session=login.session #会话信息
 ```
 # 示例
