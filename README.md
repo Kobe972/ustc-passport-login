@@ -10,7 +10,7 @@ result=login.result #登录成功后的页面信息，result.text即为页面源
 session=login.session #会话信息
 ```
 # 示例
-```
+```python
 login=Login('PB20000000','******','https://weixine.ustc.edu.cn/2020','https://weixine.ustc.edu.cn/2020/caslogin','https://weixine.ustc.edu.cn/2020/home')#登录健康打卡系统
 #Login返回True表示登录成功，否则登录失败
 ```
