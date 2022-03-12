@@ -1,22 +1,17 @@
-import pytz
-import re
-import sys
-import argparse
 from bs4 import BeautifulSoup
 import requests
-import json
 from io import BytesIO
 import pytesseract
-from PIL import Image, ImageDraw
+from PIL import Image
 import numpy as np
 import cv2
+from urllib.parse import unquote
+headers={'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36'}
 class Login:
-    def __init__(self, stuid, password, origin, service, exam):
+    def __init__(self, stuid, password, service):
         self.stuid=stuid
         self.password=password
-        self.origin=origin
         self.service=service
-        self.exam=exam
         
     def get_LT(self):
         text=self.session.get('https://passport.ustc.edu.cn/validatecode.jsp?type=login',stream=True).content
@@ -28,7 +23,7 @@ class Login:
         return pytesseract.image_to_string(Image.fromarray(image))[:4]
     
     def passport(self):
-        data=self.session.get('https://passport.ustc.edu.cn/login?service='+self.service)
+        data=self.session.get('https://passport.ustc.edu.cn/login?service='+self.service,headers=headers)
         data=data.text
         data = data.encode('ascii','ignore').decode('utf-8','ignore')
         soup = BeautifulSoup(data, 'html.parser')
@@ -36,7 +31,7 @@ class Login:
         LT=self.get_LT()
         data = {
             'model': 'uplogin.jsp',
-            'service': self.service,
+            'service': unquote(self.service),
             'warn': '',
             'showCode': '1',
             'username': self.stuid,
@@ -45,21 +40,20 @@ class Login:
             'CAS_LT':CAS_LT,
             'LT':LT
         }
-        self.session.post('https://passport.ustc.edu.cn/login', data=data)
+        post=self.session.post('https://passport.ustc.edu.cn/login', data=data,headers=headers)
+        return post
         
     def login(self):
         self.session=requests.Session()
         loginsuccess = False
         retrycount = 5
         while (not loginsuccess) and retrycount:
-            self.passport()
+            result=self.passport()
             self.cookies = self.session.cookies
-            self.result = self.session.get(self.origin)
             retrycount = retrycount - 1
-            if self.result.url != self.exam:
+            if result.url=='https://passport.ustc.edu.cn/login':
                 print("Login Failed! Retry...")
             else:
                 print("Login Successful!")
                 loginsuccess = True
         return loginsuccess
-        
